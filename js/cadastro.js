@@ -5,27 +5,53 @@ document.addEventListener("DOMContentLoaded", function () {
         const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        const linguagesSelect = document.getElementById("linguages");
+        const animeSelect = document.getElementById("linguages");
 
-        // Obter todas as linguagens selecionadas
-        const selectedLinguages = Array.from(linguagesSelect.selectedOptions).map(option => option.value);
+        const selectedanime = Array.from(animeSelect.selectedOptions).map(option => option.value);
 
-        // Validações básicas
+
         if (name === "" || email === "" || password.length < 8) {
             alert("Por favor, preencha todos os campos corretamente.");
             return;
         }
 
-        // Salvar os dados do usuário no localStorage
         const user = {
             name: name,
             email: email,
             password: password,
-            languages: selectedLinguages
+            anime_preference: []
         };
 
-        localStorage.setItem("user", JSON.stringify(user));
-        alert("Cadastro realizado com sucesso!");
-        window.location.href = "login.html";
+        async function chamarApi() {
+            try {
+                console.log("Enviando dados para a API:", user);
+
+                const response = await fetch('https://projetoweb-api.vercel.app/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Resposta da API:", data);
+                    localStorage.setItem("user", JSON.stringify(user));
+                    alert("Cadastro realizado com sucesso!");
+                    window.location.href = "login.html";
+                } else {
+                    const error = await response.json();
+                    console.error("Erro da API:", error);
+                    alert(`Erro no cadastro: ${error.message || "Erro interno no servidor. Tente novamente mais tarde."}`);
+                }
+            } catch (err) {
+                console.error("Erro ao tentar se comunicar com a API:", err);
+                alert("Erro ao tentar realizar o cadastro. Verifique sua conexão ou tente novamente mais tarde.");
+            }
+        }
+
+        chamarApi()
+
     });
 });
