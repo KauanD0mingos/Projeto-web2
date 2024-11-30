@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
             name: name,
             email: email,
             password: password,
-            anime_preference: []
+            anime_preference: selectedanime
         };
 
         async function chamarApi() {
