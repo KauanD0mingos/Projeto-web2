@@ -1,33 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
     <link rel="stylesheet" href="../style/cadastro.css">
 </head>
+
 <body>
     <div class="container">
         <h1>Cadastro</h1>
-        
+
         <label for="name" class="name-label">Nome:</label>
         <input type="text" name="username" id="name" placeholder="Digite seu nome">
 
         <label for="email" class="email-label">E-mail:</label>
         <input type="email" id="email" placeholder="Digite seu E-mail">
-        <span id="email-error" class="error-message"></span> 
-    
+        <span id="email-error" class="error-message"></span>
+
         <label for="password" class="senha-label">Senha:</label>
         <input type="password" id="password" placeholder="Digite sua senha">
         <span id="password-error" class="error-message"></span>
 
-        <label for="linguages">Linguagens de programação preferidas:</label>
-        <select id="linguages" name="linguages" multiple>
-            <option value="Python">Python</option>
-            <option value="Java">Java</option>
-            <option value="PHP">PHP</option>
-            <option value="JavaScript">JavaScript</option>
-        </select>
+        <label for="anime_preference">Animes preferidos:</label>
+        <select id="anime_preference" name="anime_preference" ></select>
 
         <button type="button" class="login-button">Cadastrar</button>
 
@@ -36,4 +33,5 @@
 
     <script src="../js/cadastro.js"></script>
 </body>
+
 </html>

@@ -20,22 +20,41 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (password === "" || password.length < 8) {
-            passwordError.tValid = fextContent = "A senha deve ter pelo menos 8 caracteres.";
-            isalse;
+            passwordError.textContent = "A senha deve ter pelo menos 8 caracteres.";
+            isValid = false;
         } else if (!/^[A-Za-z0-9]+$/.test(password)) {
             passwordError.textContent = "A senha deve conter apenas letras e números.";
             isValid = false;
         }
 
         if (isValid) {
-            const storedUser = JSON.parse(localStorage.getItem("user"));
+            chamarLoginApi(email, password);
+        }
+    });
 
-            if (storedUser && storedUser.email === email && storedUser.password === password) {
+    async function chamarLoginApi(email, password) {
+        try {
+            const response = await fetch('https://projetoweb-api.vercel.app/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Login bem-sucedido:", data);
+                localStorage.setItem("user", JSON.stringify(data));
                 alert("Login bem-sucedido!");
                 window.location.href = "home.html";
             } else {
-                alert("Credenciais inválidas. Verifique seu e-mail e senha.");
+                const error = await response.json();
+                alert(`Erro no login: ${error.message}`);
             }
+        } catch (err) {
+            console.error("Erro ao tentar se comunicar com a API:", err);
+            alert("Erro ao tentar fazer login. Tente novamente mais tarde.");
         }
-    });
+    }
 });

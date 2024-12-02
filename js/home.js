@@ -1,43 +1,53 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const api_url = 'https://projetoweb-api.vercel.app';
     const userInfo = JSON.parse(localStorage.getItem("user"));
-    const languageImages = {
-        Python: "../image/python.jpeg",
-        Java: "../image/java.png",
-        PHP: "../image/php.jpeg",
-        JavaScript: "../image/javascript.png",
-    };
 
-    if (!userInfo) {
+    if (!userInfo || !userInfo.token) {
         alert("Nenhum usuário logado. Redirecionando para a página de login.");
         window.location.href = "login.html";
         return;
     }
 
-    // Mostrar nome e e-mail
     document.getElementById("user-name").textContent = `${userInfo.name}!`;
     document.getElementById("user-email").textContent = userInfo.email;
 
-    // Mostrar linguagens com imagens
-    const languagesList = document.getElementById("user-languages");
-    userInfo.languages.forEach(language => {
-        const li = document.createElement("li");
+    const animesList = document.getElementById("user-animes");
 
-        // Criar imagem da linguagem
-        const img = loadImage(languageImages[language] || "path/to/default-language.png");
-        img.alt = language;
-        img.style.width = "50px"; // Ajuste o tamanho conforme necessário
-        img.style.marginRight = "10px";
+    async function getUserAnimes() {
+        try {
+            const response = await fetch(`${api_url}/user/animes`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${userInfo.token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-        // Adicionar texto da linguagem
-        const span = document.createElement("span");
-        span.textContent = language;
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Animes do usuário:", data);
 
-        li.appendChild(img);
-        li.appendChild(span);
-        languagesList.appendChild(li);
-    });
+                if (data.animes && data.animes.length > 0) {
+                    animesList.innerHTML = "";
+                    data.animes.forEach(anime => {
+                        const li = document.createElement("li");
+                        li.textContent = anime.title;
+                        animesList.appendChild(li);
+                    });
+                } else {
+                    animesList.innerHTML = "<li>Nenhum anime registrado.</li>";
+                }
+            } else {
+                const error = await response.json();
+                console.error("Erro ao obter animes do usuário:", error);
+                alert(`Erro ao carregar animes: ${error.message}`);
+            }
+        } catch (err) {
+            console.error("Erro ao se comunicar com a API:", err);
+            alert("Erro ao carregar os animes do usuário. Tente novamente mais tarde.");
+        }
+    }
 
-    // Lógica para logout
     const logoutButton = document.getElementById("logout-button");
     logoutButton.addEventListener("click", function () {
         localStorage.removeItem("user");
@@ -45,14 +55,5 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "login.html";
     });
 
-    // Função de carregamento de imagem com fallback
-    function loadImage(src) {
-        const defaultImage = "path/to/default-language.png";
-        const img = new Image();
-        img.src = src;
-        img.onerror = function () {
-            this.src = defaultImage;
-        };
-        return img;
-    }
+    getUserAnimes();
 });
